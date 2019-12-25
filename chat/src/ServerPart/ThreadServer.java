@@ -95,9 +95,9 @@ class SocketThread extends Thread {
 
                 if (messager.equals(str)) {
 
-                    /*for (name:ThreadServer.users) {
+                    for (name:ThreadServer.users) {
                         System.out.println(name + ", для вас есть личное сообщение");
-                    }*/
+                    }
                 }
                // for (ServerSocket serverSocket: ThreadServer.usersFull){///////////////////////////////////////////////////////////////
                //     pw.println(R.format(date) + "Сообщение от " + name + ": " + messager);
