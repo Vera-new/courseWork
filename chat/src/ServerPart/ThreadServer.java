@@ -1,13 +1,20 @@
 package ServerPart;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
+import com.sun.security.ntlm.Client;
+
+import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketException;
+import java.net.SocketTimeoutException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+
+
+// добавить мапу
+// обработать исключение при отключении клиента
+// сдалать адрессованное сообщение
+
 
 
 
@@ -15,32 +22,41 @@ import java.util.*;
 public class ThreadServer {
     //мои изменения
     //создаём массив для хранения клиентов, которые зашли в чат (полный адрес)
-    static  ArrayList <ServerSocket> usersFull = new ArrayList <>();
+    static HashMap <Socket, String> usersFull=new HashMap<>();
+ //   static  ArrayList <ServerSocket> usersFull = new ArrayList <>(); эту строку заменила на мапу
     //создаём массив для хранения клиентов, которые зашли в чат (имена)
     static  ArrayList <String> users = new ArrayList <>();
-    //закончились мои изменения
+
     public static void main(String[] args) {
         //определяем номер порта, который будет "слушать" сервер
         int port = 1777;
+        ServerSocket serverSocket = null;
         try {
             //открыть серверный сокет (ServerSocket)
-            ServerSocket serverSocket = new ServerSocket(port);
+            serverSocket = new ServerSocket(port);
             //Входим в бесконечный цикл - ожидаем соединения
             while (true) {
                 System.out.println("Ожидание связи с портом " + port);
                 // получив соединение начинаем работать с сокетом
-                Socket fromClientSocket=serverSocket.accept();
+                Socket fromClientSocket = serverSocket.accept();
                 // стартует новый поток для обработки запроса клиента
                 new SocketThread(fromClientSocket).start();
                 //добавляем нового пользователя в список тех, кто в чате
-                usersFull.add(serverSocket);
             }
+        } catch (SocketException e) {
+            try {
+                serverSocket.close();
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+        } catch (EOFException e) {
+            return;
         } catch (IOException ex) {
             ex.printStackTrace(System.out);
         }
     }
 
-}
+    }
 
 class SocketThread extends Thread {
 
@@ -65,16 +81,29 @@ class SocketThread extends Thread {
             //ура! тут научился видеть имя!!!!
             String name=br.readLine();
             ThreadServer.users.add(name);
+
+            ThreadServer.usersFull.put(fromClientSocket, name);
             Date date=new Date();
             SimpleDateFormat R= new SimpleDateFormat("(HH:mm)");
 
+            System.out.println("Клиент " + name + " стартовал");//пишем что стартовал клиент
+
             while ((messager = br.readLine()) != null) {
                 // печатаем сообщение
-                for (ServerSocket serverSocket: ThreadServer.usersFull){///////////////////////////////////////////////////////////////
-                    pw.println(R.format(date) + "Сообщение от " + name + ": " + messager);
+                String str = "Сообщение для "+name;
+
+
+                if (messager.equals(str)) {
+
+                    /*for (name:ThreadServer.users) {
+                        System.out.println(name + ", для вас есть личное сообщение");
+                    }*/
+                }
+               // for (ServerSocket serverSocket: ThreadServer.usersFull){///////////////////////////////////////////////////////////////
+               //     pw.println(R.format(date) + "Сообщение от " + name + ": " + messager);
                     System.out.println(R.format(date) + "Сообщение от " + name + ": " + messager);
                     pw.flush();
-                }
+              //  }
 
                 //сравниваем с "Пока" и если это так, то выходим из цикла и закрываем соединение
                 if (messager.equals("Пока")) {
@@ -85,9 +114,19 @@ class SocketThread extends Thread {
                     System.out.println(ThreadServer.users);
                 }
             }
-        } catch (IOException ex) {
+        } catch (EOFException e) {
+            return;
+        }catch (SocketException e){
+            try {
+                fromClientSocket.close();
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+        }
+        catch (IOException ex) {
             ex.printStackTrace();
         }
+        }
     }
-}
+
 
