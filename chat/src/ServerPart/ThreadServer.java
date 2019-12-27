@@ -90,33 +90,35 @@ class SocketThread extends Thread {
 
             while ((messager = br.readLine()) != null) {
                 // печатаем сообщение
-                String str = "Сообщение для "+name;
+                System.out.println(R.format(date) + "Сообщение от " + name + ": " + messager);
+                pw.println(R.format(date) + "Сообщение от " + name + ": " + messager);
 
-
+                String str = "Сообщение для " + name;
                 if (messager.equals(str)) {
+       //          for (ServerSocket serverSocket: ThreadServer.usersFull){
+                         pw.println(R.format(date) + "Сообщение от " + name + ": " + messager);
 
-                    for (name:ThreadServer.users) {
+                    if (name.equals(ThreadServer.users)) {
                         System.out.println(name + ", для вас есть личное сообщение");
                     }
-                }
-               // for (ServerSocket serverSocket: ThreadServer.usersFull){///////////////////////////////////////////////////////////////
-               //     pw.println(R.format(date) + "Сообщение от " + name + ": " + messager);
+
                     System.out.println(R.format(date) + "Сообщение от " + name + ": " + messager);
                     pw.flush();
-              //  }
+                    //  }
 
-                //сравниваем с "Пока" и если это так, то выходим из цикла и закрываем соединение
-                if (messager.equals("Пока")) {
-                    // тоже говорим клиенту "Пока"
-                    pw.println("Пока");
-                    break;}
-                else  if (messager.equals("Кто в сети?")) {
-                    System.out.println(ThreadServer.users);
+                    //сравниваем с "Пока" и если это так, то выходим из цикла и закрываем соединение
+                    if (messager.equals("Пока")) {
+                        // тоже говорим клиенту "Пока"
+                        pw.println("Пока");
+                        break;
+                    } else if (messager.equals("Кто в сети?")) {
+                        System.out.println(ThreadServer.users);
+                    }
                 }
             }
         } catch (EOFException e) {
             return;
-        }catch (SocketException e){
+      }catch (SocketException e){
             try {
                 fromClientSocket.close();
             } catch (IOException ex) {
@@ -125,8 +127,10 @@ class SocketThread extends Thread {
         }
         catch (IOException ex) {
             ex.printStackTrace();
-        }
-        }
+        } /*catch (IOException e) {
+            e.printStackTrace();
+        }*/
+    }
     }
 
 

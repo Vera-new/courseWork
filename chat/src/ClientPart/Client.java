@@ -53,25 +53,15 @@ class Client {
 //        pw.close();
 //        socket.close();
         } catch (SocketException e) {
-            //          e.printStackTrace();
+            e.printStackTrace();
             socket.close();
         }
- /*      catch (InterruptedException e) {
-           e.printStackTrace();*/
-        //     }
         catch (UnknownHostException e) {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
-        //     finally {
-        //        try {
-        //             if (Socket != null){
-        //               Socket.close();}
-        //        }catch (IOException e) {
-        //            e.printStackTrace();
 
-        //        }
     }
-       }
+}
 
