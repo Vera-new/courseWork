@@ -1,10 +1,14 @@
 package ClientPart;
 
+import ServerPart.ThreadServer;
+
 import java.io.*;
 import java.net.Socket;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.*;
+
+import static ServerPart.ThreadServer.users;
 
 
 // клиентская часть
@@ -46,6 +50,10 @@ class Client {
 
                 messager = mes.nextLine();
                 pw.println(messager);
+
+                if (messager.equals(name)) {
+                    System.out.println("Личное сообщение");
+                }
             }
 
 

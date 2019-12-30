@@ -23,9 +23,9 @@ public class ThreadServer {
     //мои изменения
     //создаём массив для хранения клиентов, которые зашли в чат (полный адрес)
     static HashMap <Socket, String> usersFull=new HashMap<>();
- //   static  ArrayList <ServerSocket> usersFull = new ArrayList <>(); эту строку заменила на мапу
+  //  static  ArrayList <ServerSocket> usersFull = new ArrayList <>(); эту строку заменила на мапу
     //создаём массив для хранения клиентов, которые зашли в чат (имена)
-    static  ArrayList <String> users = new ArrayList <>();
+    public static  ArrayList <String> users = new ArrayList <>();
 
     public static void main(String[] args) {
         //определяем номер порта, который будет "слушать" сервер
@@ -43,6 +43,8 @@ public class ThreadServer {
                 new SocketThread(fromClientSocket).start();
                 //добавляем нового пользователя в список тех, кто в чате
             }
+
+
         } catch (SocketException e) {
             try {
                 serverSocket.close();
@@ -56,7 +58,9 @@ public class ThreadServer {
         }
     }
 
-    }
+}
+
+
 
 class SocketThread extends Thread {
 
@@ -79,7 +83,7 @@ class SocketThread extends Thread {
 
             String messager;
             //ура! тут научился видеть имя!!!!
-            String name=br.readLine();
+          String name=br.readLine();
             ThreadServer.users.add(name);
 
             ThreadServer.usersFull.put(fromClientSocket, name);
@@ -93,29 +97,22 @@ class SocketThread extends Thread {
                 System.out.println(R.format(date) + "Сообщение от " + name + ": " + messager);
                 pw.println(R.format(date) + "Сообщение от " + name + ": " + messager);
 
-                String str = "Сообщение для " + name;
-                if (messager.equals(str)) {
-       //          for (ServerSocket serverSocket: ThreadServer.usersFull){
-                         pw.println(R.format(date) + "Сообщение от " + name + ": " + messager);
-
-                    if (name.equals(ThreadServer.users)) {
-                        System.out.println(name + ", для вас есть личное сообщение");
-                    }
-
-                    System.out.println(R.format(date) + "Сообщение от " + name + ": " + messager);
-                    pw.flush();
-                    //  }
+                if (messager.equals(name)) {
+                    //      for ((name=br.readLine()); ThreadServer.users){
+                    pw.println(name + ", для вас есть личное сообщение");
+                    System.out.println(name + ", для вас есть личное сообщение");
 
                     //сравниваем с "Пока" и если это так, то выходим из цикла и закрываем соединение
-                    if (messager.equals("Пока")) {
+                }else if (messager.equals("Пока")) {
                         // тоже говорим клиенту "Пока"
                         pw.println("Пока");
                         break;
-                    } else if (messager.equals("Кто в сети?")) {
-                        System.out.println(ThreadServer.users);
-                    }
+                } else if (messager.equals("Кто в сети?")) {
+                        System.out.println(ThreadServer.users);///////////////////////////////////////////////////////////////
                 }
-            }
+
+          }
+
         } catch (EOFException e) {
             return;
       }catch (SocketException e){
@@ -131,6 +128,9 @@ class SocketThread extends Thread {
             e.printStackTrace();
         }*/
     }
-    }
+
+}
+
+
 
 
